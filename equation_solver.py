@@ -1,8 +1,8 @@
 import math
 import numpy as np
 
-# 🧠 Equation Solver v2
-# now with history + cubic equations (yeah we leveling up)
+# 🧠 Equation Solver v3
+# solves equations so you don’t cry during math exams
 
 history = []
 
@@ -12,7 +12,7 @@ def get_number(prompt):
         try:
             return float(input(prompt))
         except ValueError:
-            print("numbers only pls")
+            print("please enter a valid number :)")
 
 
 def add_to_history(entry):
@@ -21,7 +21,7 @@ def add_to_history(entry):
 
 def show_history():
     if not history:
-        print("\nno history yet... go solve something first")
+        print("\nno history yet... go do some math first")
         return
 
     print("\n📜 History:")
@@ -29,56 +29,61 @@ def show_history():
         print(f"{i}. {item}")
 
 
+def format_complex(num):
+    """Make complex numbers look clean"""
+    if abs(num.imag) < 1e-6:
+        return f"{num.real:.2f}"
+    return f"{num.real:.2f} + {num.imag:.2f}j"
+
+
 def solve_linear():
-    print("\nSolving: ax + b = 0")
+    print("\n--- Linear Equation: ax + b = 0 ---")
 
     a = get_number("Enter a: ")
     b = get_number("Enter b: ")
 
     if a == 0:
-        print("no solution (a can't be 0)")
+        print("no solution (a cannot be 0)")
         return
 
     x = -b / a
-    result = f"ax + b = 0 → x = {x:.2f}"
     print(f"Solution: x = {x:.2f}")
-    add_to_history(result)
+
+    add_to_history(f"Linear → x = {x:.2f}")
 
 
 def solve_quadratic():
-    print("\nSolving: ax² + bx + c = 0")
+    print("\n--- Quadratic Equation: ax² + bx + c = 0 ---")
 
     a = get_number("Enter a: ")
     b = get_number("Enter b: ")
     c = get_number("Enter c: ")
 
     if a == 0:
-        print("this becomes linear... but nah try again")
+        print("this becomes linear... try again")
         return
 
-    discriminant = b**2 - 4*a*c
-    print(f"Discriminant = {discriminant}")
+    d = b**2 - 4*a*c
+    print(f"Discriminant = {d:.2f}")
 
-    if discriminant > 0:
-        x1 = (-b + math.sqrt(discriminant)) / (2*a)
-        x2 = (-b - math.sqrt(discriminant)) / (2*a)
-        result = f"ax²+bx+c=0 → x1={x1:.2f}, x2={x2:.2f}"
+    if d > 0:
+        x1 = (-b + math.sqrt(d)) / (2*a)
+        x2 = (-b - math.sqrt(d)) / (2*a)
         print(f"Two solutions: x1 = {x1:.2f}, x2 = {x2:.2f}")
+        add_to_history(f"Quadratic → x1={x1:.2f}, x2={x2:.2f}")
 
-    elif discriminant == 0:
+    elif d == 0:
         x = -b / (2*a)
-        result = f"ax²+bx+c=0 → x={x:.2f}"
         print(f"One solution: x = {x:.2f}")
+        add_to_history(f"Quadratic → x={x:.2f}")
 
     else:
-        result = "ax²+bx+c=0 → no real solutions"
-        print("no real solutions")
-
-    add_to_history(result)
+        print("No real solutions (complex roots)")
+        add_to_history("Quadratic → complex solutions")
 
 
 def solve_cubic():
-    print("\nSolving: ax³ + bx² + cx + d = 0")
+    print("\n--- Cubic Equation: ax³ + bx² + cx + d = 0 ---")
 
     a = get_number("Enter a: ")
     b = get_number("Enter b: ")
@@ -86,29 +91,31 @@ def solve_cubic():
     d = get_number("Enter d: ")
 
     if a == 0:
-        print("this is not cubic bro 😭")
+        print("this is NOT a cubic equation 😭")
         return
 
-    # numpy handles roots (real + complex)
     roots = np.roots([a, b, c, d])
 
     print("Solutions:")
-    for i, r in enumerate(roots, 1):
-        print(f"x{i} = {r:.2f}")
+    formatted_roots = []
 
-    result = f"ax³+bx²+cx+d=0 → roots = {[round(r,2) for r in roots]}"
-    add_to_history(result)
+    for i, r in enumerate(roots, 1):
+        clean = format_complex(r)
+        formatted_roots.append(clean)
+        print(f"x{i} = {clean}")
+
+    add_to_history(f"Cubic → roots = {formatted_roots}")
 
 
 def main():
-    print("🧠 Equation Solver v2")
-    print("still solving your math problems\n")
+    print("🧠 Equation Solver v3")
+    print("because math won’t solve itself\n")
 
     while True:
-        print("\nChoose what to do:")
-        print("1 - Solve a linear equation")
-        print("2 - Solve a quadratic equation")
-        print("3 - Solve a cubic equation")
+        print("\nChoose an option:")
+        print("1 - Linear equation")
+        print("2 - Quadratic equation")
+        print("3 - Cubic equation")
         print("4 - Show history")
         print("5 - Exit")
 
@@ -126,7 +133,7 @@ def main():
             print("done. go touch some grass 🌱")
             break
         else:
-            print("invalid choice")
+            print("invalid choice, try again")
 
 
 if __name__ == "__main__":
