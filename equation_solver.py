@@ -1,8 +1,8 @@
 import math
 import numpy as np
 
-# 🧠 Equation Solver v3
-# solves equations so you don’t cry during math exams
+# 🧠 Equation Solver v4
+# solves equations so you survive math exams
 
 history = []
 
@@ -30,7 +30,7 @@ def show_history():
 
 
 def format_complex(num):
-    """Make complex numbers look clean"""
+    """Format complex numbers nicely"""
     if abs(num.imag) < 1e-6:
         return f"{num.real:.2f}"
     return f"{num.real:.2f} + {num.imag:.2f}j"
@@ -78,8 +78,17 @@ def solve_quadratic():
         add_to_history(f"Quadratic → x={x:.2f}")
 
     else:
-        print("No real solutions (complex roots)")
-        add_to_history("Quadratic → complex solutions")
+        # handle complex roots
+        real_part = -b / (2*a)
+        imag_part = math.sqrt(-d) / (2*a)
+        x1 = complex(real_part, imag_part)
+        x2 = complex(real_part, -imag_part)
+
+        print(f"Complex solutions:")
+        print(f"x1 = {format_complex(x1)}")
+        print(f"x2 = {format_complex(x2)}")
+
+        add_to_history(f"Quadratic → x1={format_complex(x1)}, x2={format_complex(x2)}")
 
 
 def solve_cubic():
@@ -107,18 +116,21 @@ def solve_cubic():
     add_to_history(f"Cubic → roots = {formatted_roots}")
 
 
+def show_menu():
+    print("\nChoose an option:")
+    print("1 - Linear equation")
+    print("2 - Quadratic equation")
+    print("3 - Cubic equation")
+    print("4 - Show history")
+    print("5 - Exit")
+
+
 def main():
-    print("🧠 Equation Solver v3")
+    print("🧠 Equation Solver v4")
     print("because math won’t solve itself\n")
 
     while True:
-        print("\nChoose an option:")
-        print("1 - Linear equation")
-        print("2 - Quadratic equation")
-        print("3 - Cubic equation")
-        print("4 - Show history")
-        print("5 - Exit")
-
+        show_menu()
         choice = input("Your choice: ").strip()
 
         if choice == "1":
