@@ -1,10 +1,12 @@
 import math
 import numpy as np
+import os
 
-# 🧠 Equation Solver v4
-# solves equations so you survive math exams
+# 🧠 Equation Solver v5
+# now with file saving + polynomial solver
 
 history = []
+HISTORY_FILE = "history.txt"
 
 
 def get_number(prompt):
@@ -17,6 +19,20 @@ def get_number(prompt):
 
 def add_to_history(entry):
     history.append(entry)
+    save_history()
+
+
+def save_history():
+    with open(HISTORY_FILE, "w") as f:
+        for item in history:
+            f.write(item + "\n")
+
+
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, "r") as f:
+            for line in f:
+                history.append(line.strip())
 
 
 def show_history():
@@ -30,11 +46,12 @@ def show_history():
 
 
 def format_complex(num):
-    """Format complex numbers nicely"""
     if abs(num.imag) < 1e-6:
         return f"{num.real:.2f}"
     return f"{num.real:.2f} + {num.imag:.2f}j"
 
+
+# ---------------- SOLVERS ---------------- #
 
 def solve_linear():
     print("\n--- Linear Equation: ax + b = 0 ---")
@@ -69,22 +86,21 @@ def solve_quadratic():
     if d > 0:
         x1 = (-b + math.sqrt(d)) / (2*a)
         x2 = (-b - math.sqrt(d)) / (2*a)
-        print(f"Two solutions: x1 = {x1:.2f}, x2 = {x2:.2f}")
+        print(f"x1 = {x1:.2f}, x2 = {x2:.2f}")
         add_to_history(f"Quadratic → x1={x1:.2f}, x2={x2:.2f}")
 
     elif d == 0:
         x = -b / (2*a)
-        print(f"One solution: x = {x:.2f}")
+        print(f"x = {x:.2f}")
         add_to_history(f"Quadratic → x={x:.2f}")
 
     else:
-        # handle complex roots
-        real_part = -b / (2*a)
-        imag_part = math.sqrt(-d) / (2*a)
-        x1 = complex(real_part, imag_part)
-        x2 = complex(real_part, -imag_part)
+        real = -b / (2*a)
+        imag = math.sqrt(-d) / (2*a)
+        x1 = complex(real, imag)
+        x2 = complex(real, -imag)
 
-        print(f"Complex solutions:")
+        print("Complex solutions:")
         print(f"x1 = {format_complex(x1)}")
         print(f"x2 = {format_complex(x2)}")
 
@@ -106,28 +122,58 @@ def solve_cubic():
     roots = np.roots([a, b, c, d])
 
     print("Solutions:")
-    formatted_roots = []
+    formatted = []
 
     for i, r in enumerate(roots, 1):
         clean = format_complex(r)
-        formatted_roots.append(clean)
+        formatted.append(clean)
         print(f"x{i} = {clean}")
 
-    add_to_history(f"Cubic → roots = {formatted_roots}")
+    add_to_history(f"Cubic → {formatted}")
 
+
+def solve_polynomial():
+    print("\n--- Polynomial Solver (any degree) ---")
+    print("Example: for 2x² + 3x + 1 → enter: 2 3 1")
+
+    coeffs = input("Enter coefficients (space-separated): ").strip().split()
+
+    try:
+        coeffs = [float(c) for c in coeffs]
+    except ValueError:
+        print("invalid input")
+        return
+
+    roots = np.roots(coeffs)
+
+    print("Solutions:")
+    formatted = []
+
+    for i, r in enumerate(roots, 1):
+        clean = format_complex(r)
+        formatted.append(clean)
+        print(f"x{i} = {clean}")
+
+    add_to_history(f"Polynomial → {formatted}")
+
+
+# ---------------- MENU ---------------- #
 
 def show_menu():
     print("\nChoose an option:")
     print("1 - Linear equation")
     print("2 - Quadratic equation")
     print("3 - Cubic equation")
-    print("4 - Show history")
-    print("5 - Exit")
+    print("4 - Polynomial (any degree)")
+    print("5 - Show history")
+    print("6 - Exit")
 
 
 def main():
-    print("🧠 Equation Solver v4")
-    print("because math won’t solve itself\n")
+    load_history()
+
+    print("🧠 Equation Solver v5")
+    print("now we actually remember stuff 😎\n")
 
     while True:
         show_menu()
@@ -140,8 +186,10 @@ def main():
         elif choice == "3":
             solve_cubic()
         elif choice == "4":
-            show_history()
+            solve_polynomial()
         elif choice == "5":
+            show_history()
+        elif choice == "6":
             print("done. go touch some grass 🌱")
             break
         else:
