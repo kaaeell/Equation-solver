@@ -2,13 +2,11 @@ import math
 import numpy as np
 import os
 
-# equation solver v7 - now with extra stuff
-# i actually use this for my math homework lol
+# equation solver v7 - for math homework
+# saves equations so i don't have to retype everything
 
 history = []
 HISTORY_FILE = "history.txt"
-
-# i got tired of retyping equations so now it saves them
 
 
 # ---------------- HELPER STUFF ---------------- #
@@ -18,7 +16,7 @@ def get_number(prompt):
         try:
             return float(input(prompt))
         except ValueError:
-            print("❌ bro that's not a number")
+            print("❌ not a number")
 
 
 def format_complex(num):
@@ -27,7 +25,7 @@ def format_complex(num):
     return f"{num.real:.2f} + {num.imag:.2f}j"
 
 
-# ---------------- HISTORY SAVING (finally works) ---------------- #
+# ---------------- HISTORY ---------------- #
 
 def load_history():
     if os.path.exists(HISTORY_FILE):
@@ -49,10 +47,10 @@ def add_to_history(entry):
 
 def show_history():
     if not history:
-        print("\n📭 no history yet... do some math first")
+        print("\n📭 no history yet")
         return
 
-    print("\n📜 Your past equations:")
+    print("\n📜 Past equations:")
     for i, item in enumerate(history, 1):
         print(f"{i}. {item}")
 
@@ -60,10 +58,10 @@ def show_history():
 def clear_history():
     history.clear()
     save_history()
-    print("🧹 all gone! fresh start")
+    print("🧹 cleared")
 
 
-# ---------------- THE ACTUAL MATH PART ---------------- #
+# ---------------- MATH ---------------- #
 
 def solve_linear():
     print("\n--- Linear: ax + b = 0 ---")
@@ -72,7 +70,7 @@ def solve_linear():
     b = get_number("b = ")
 
     if a == 0:
-        print("❌ a can't be 0 (that's just b=0)")
+        print("❌ a can't be 0")
         return
 
     x = -b / a
@@ -88,7 +86,7 @@ def solve_quadratic():
     c = get_number("c = ")
 
     if a == 0:
-        print("❌ that's linear actually... use option 1")
+        print("❌ that's linear, use option 1")
         return
 
     d = b**2 - 4*a*c
@@ -112,7 +110,7 @@ def solve_quadratic():
         x1 = complex(real, imag)
         x2 = complex(real, -imag)
 
-        print("✅ Complex roots (imaginary numbers):")
+        print("✅ Complex roots:")
         print(f"x1 = {format_complex(x1)}")
         print(f"x2 = {format_complex(x2)}")
 
@@ -130,7 +128,7 @@ def solve_cubic():
     d = get_number("d = ")
 
     if a == 0:
-        print("❌ that's not cubic... try quadratic option")
+        print("❌ that's not cubic, try option 2")
         return
 
     roots = np.roots([a, b, c, d])
@@ -147,20 +145,20 @@ def solve_cubic():
 
 
 def solve_polynomial():
-    print("\n--- Polynomial Solver (any degree you want) ---")
+    print("\n--- Polynomial Solver ---")
     print("Example: 2x² + 3x + 1 → type: 2 3 1")
-    print("For 4x³ - 2x + 7 → type: 4 0 -2 7 (include zeros!)")
+    print("For 4x³ - 2x + 7 → type: 4 0 -2 7 (include zeros)")
 
     coeffs = input("Enter coefficients (space separated): ").strip().split()
 
     try:
         coeffs = [float(c) for c in coeffs]
     except ValueError:
-        print("❌ numbers only please")
+        print("❌ numbers only")
         return
 
     if len(coeffs) < 2:
-        print("❌ need at least 2 numbers (like '3 5' for 3x+5=0)")
+        print("❌ need at least 2 numbers")
         return
 
     roots = np.roots(coeffs)
@@ -175,8 +173,6 @@ def solve_polynomial():
 
     add_to_history(f"Polynomial {coeffs} → {formatted}")
 
-
-# ---------------- BONUS: SYSTEM OF EQUATIONS (new!) ---------------- #
 
 def solve_system():
     print("\n--- System of 2 Equations ---")
@@ -194,7 +190,7 @@ def solve_system():
     det = a1*b2 - a2*b1
     
     if det == 0:
-        print("❌ No unique solution (lines are parallel or same)")
+        print("❌ No unique solution (parallel lines)")
         return
     
     x = (c1*b2 - c2*b1) / det
@@ -204,11 +200,9 @@ def solve_system():
     add_to_history(f"System: x={x:.2f}, y={y:.2f}")
 
 
-# ---------------- DERIVATIVE CHECKER (fun extra) ---------------- #
-
 def derivative_check():
-    print("\n--- Simple Derivative Checker ---")
-    print("For polynomial like: 3x² + 2x + 1")
+    print("\n--- Derivative Checker ---")
+    print("Polynomial like: 3x² + 2x + 1")
     
     coeffs = input("Enter coefficients (highest degree first): ").strip().split()
     
@@ -246,17 +240,16 @@ def derivative_check():
     print("\n")
 
 
-# ---------------- MENU (updated with new stuff) ---------------- #
+# ---------------- MENU ---------------- #
 
 def show_menu():
     print("\n" + "="*40)
-    print("What do you want to solve?")
     print("1 - Linear (ax + b = 0)")
     print("2 - Quadratic (ax² + bx + c = 0)")
     print("3 - Cubic (ax³ + bx² + cx + d = 0)")
     print("4 - Polynomial (any degree)")
-    print("5 - System of 2 equations 🆕")
-    print("6 - Derivative checker 🆕")
+    print("5 - System of 2 equations")
+    print("6 - Derivative checker")
     print("7 - Show history")
     print("8 - Clear history")
     print("9 - Exit")
@@ -267,8 +260,7 @@ def main():
     load_history()
 
     print("🧮 Equation Solver v7")
-    print("made by someone who's tired of doing math by hand")
-    print("now with systems & derivatives! (i'm learning calc)")
+    print("for when you're too lazy to do math by hand")
 
     while True:
         show_menu()
@@ -291,10 +283,10 @@ def main():
         elif choice == "8":
             clear_history()
         elif choice == "9":
-            print("\n👋 later! don't forget to actually study tho")
+            print("\n👋 bye")
             break
         else:
-            print("❌ not an option... look at the menu")
+            print("❌ not an option")
 
 
 if __name__ == "__main__":
