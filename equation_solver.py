@@ -1,41 +1,44 @@
 import math
 import numpy as np
 import os
-
-# equation solver v7 - for math homework
-# saves equations so i don't have to retype everything
+import matplotlib.pyplot as plt
 
 history = []
 HISTORY_FILE = "history.txt"
 
 
-# ---------------- HELPER STUFF ---------------- #
+# ---------------- HELPERS ---------------- #
 
 def get_number(prompt):
     while True:
         try:
             return float(input(prompt))
         except ValueError:
-            print("❌ not a number")
+            print("❌ invalid number")
 
 
 def format_complex(num):
     if abs(num.imag) < 1e-6:
-        return f"{num.real:.2f}"
-    return f"{num.real:.2f} + {num.imag:.2f}j"
+        return f"{num.real:.4f}"
+    sign = "+" if num.imag >= 0 else "-"
+    return f"{num.real:.4f} {sign} {abs(num.imag):.4f}j"
+
+
+def pause():
+    input("\nPress ENTER to continue...")
 
 
 # ---------------- HISTORY ---------------- #
 
 def load_history():
     if os.path.exists(HISTORY_FILE):
-        with open(HISTORY_FILE, "r") as f:
+        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
             history.clear()
             history.extend(line.strip() for line in f)
 
 
 def save_history():
-    with open(HISTORY_FILE, "w") as f:
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         for item in history:
             f.write(item + "\n")
 
@@ -47,10 +50,12 @@ def add_to_history(entry):
 
 def show_history():
     if not history:
-        print("\n📭 no history yet")
+        print("\n📭 No history")
         return
 
-    print("\n📜 Past equations:")
+    print("\n📜 History")
+    print("-" * 40)
+
     for i, item in enumerate(history, 1):
         print(f"{i}. {item}")
 
@@ -58,51 +63,58 @@ def show_history():
 def clear_history():
     history.clear()
     save_history()
-    print("🧹 cleared")
+    print("🧹 History cleared")
 
 
-# ---------------- MATH ---------------- #
+def export_history():
+    filename = "equation_export.txt"
+
+    with open(filename, "w", encoding="utf-8") as f:
+        for item in history:
+            f.write(item + "\n")
+
+    print(f"✅ Exported to {filename}")
+
+
+# ---------------- EQUATION SOLVERS ---------------- #
 
 def solve_linear():
-    print("\n--- Linear: ax + b = 0 ---")
+    print("\n--- Linear Equation ---")
+    print("ax + b = 0")
 
     a = get_number("a = ")
     b = get_number("b = ")
 
     if a == 0:
-        print("❌ a can't be 0")
+        print("❌ a cannot be 0")
         return
 
     x = -b / a
-    print(f"✅ x = {x:.2f}")
-    add_to_history(f"Linear {a}x + {b} = 0  →  x = {x:.2f}")
+
+    print(f"\n✅ x = {x:.4f}")
+
+    add_to_history(f"Linear: {a}x + {b} = 0 → x = {x:.4f}")
 
 
 def solve_quadratic():
-    print("\n--- Quadratic: ax² + bx + c = 0 ---")
+    print("\n--- Quadratic Equation ---")
+    print("ax² + bx + c = 0")
 
     a = get_number("a = ")
     b = get_number("b = ")
     c = get_number("c = ")
 
     if a == 0:
-        print("❌ that's linear, use option 1")
+        print("❌ Use linear solver")
         return
 
     d = b**2 - 4*a*c
-    print(f"Discriminant = {d:.2f}")
 
-    if d > 0:
+    print(f"\nDiscriminant = {d:.4f}")
+
+    if d >= 0:
         x1 = (-b + math.sqrt(d)) / (2*a)
         x2 = (-b - math.sqrt(d)) / (2*a)
-        print(f"✅ x1 = {x1:.2f}, x2 = {x2:.2f}")
-        add_to_history(f"Quadratic {a}x²+{b}x+{c}=0 → x1={x1:.2f}, x2={x2:.2f}")
-
-    elif d == 0:
-        x = -b / (2*a)
-        print(f"✅ x = {x:.2f} (double root)")
-        add_to_history(f"Quadratic {a}x²+{b}x+{c}=0 → x={x:.2f}")
-
     else:
         real = -b / (2*a)
         imag = math.sqrt(-d) / (2*a)
@@ -110,183 +122,267 @@ def solve_quadratic():
         x1 = complex(real, imag)
         x2 = complex(real, -imag)
 
-        print("✅ Complex roots:")
-        print(f"x1 = {format_complex(x1)}")
-        print(f"x2 = {format_complex(x2)}")
+    print(f"x1 = {format_complex(x1)}")
+    print(f"x2 = {format_complex(x2)}")
 
-        add_to_history(
-            f"Quadratic {a}x²+{b}x+{c}=0 → x1={format_complex(x1)}, x2={format_complex(x2)}"
-        )
-
-
-def solve_cubic():
-    print("\n--- Cubic: ax³ + bx² + cx + d = 0 ---")
-
-    a = get_number("a = ")
-    b = get_number("b = ")
-    c = get_number("c = ")
-    d = get_number("d = ")
-
-    if a == 0:
-        print("❌ that's not cubic, try option 2")
-        return
-
-    roots = np.roots([a, b, c, d])
-
-    print("✅ Roots:")
-    formatted = []
-
-    for i, r in enumerate(roots, 1):
-        clean = format_complex(r)
-        formatted.append(clean)
-        print(f"x{i} = {clean}")
-
-    add_to_history(f"Cubic → {formatted}")
+    add_to_history(
+        f"Quadratic: {a}x² + {b}x + {c} = 0 → "
+        f"x1={format_complex(x1)}, x2={format_complex(x2)}"
+    )
 
 
 def solve_polynomial():
     print("\n--- Polynomial Solver ---")
-    print("Example: 2x² + 3x + 1 → type: 2 3 1")
-    print("For 4x³ - 2x + 7 → type: 4 0 -2 7 (include zeros)")
+    print("Example:")
+    print("2x² + 3x + 1 → 2 3 1")
 
-    coeffs = input("Enter coefficients (space separated): ").strip().split()
+    coeffs = input("\nCoefficients: ").split()
 
     try:
-        coeffs = [float(c) for c in coeffs]
+        coeffs = [float(x) for x in coeffs]
     except ValueError:
         print("❌ numbers only")
         return
 
-    if len(coeffs) < 2:
-        print("❌ need at least 2 numbers")
-        return
-
     roots = np.roots(coeffs)
 
-    print("✅ Solutions:")
+    print("\n✅ Roots")
+
     formatted = []
 
-    for i, r in enumerate(roots, 1):
-        clean = format_complex(r)
+    for i, root in enumerate(roots, 1):
+        clean = format_complex(root)
         formatted.append(clean)
+
         print(f"x{i} = {clean}")
 
     add_to_history(f"Polynomial {coeffs} → {formatted}")
 
 
 def solve_system():
-    print("\n--- System of 2 Equations ---")
-    print("Form: a1*x + b1*y = c1")
-    print("      a2*x + b2*y = c2")
-    
+    print("\n--- 2x2 System Solver ---")
+
+    print("\na1*x + b1*y = c1")
+    print("a2*x + b2*y = c2")
+
     a1 = get_number("a1 = ")
     b1 = get_number("b1 = ")
     c1 = get_number("c1 = ")
-    
+
     a2 = get_number("a2 = ")
     b2 = get_number("b2 = ")
     c2 = get_number("c2 = ")
-    
-    det = a1*b2 - a2*b1
-    
-    if det == 0:
-        print("❌ No unique solution (parallel lines)")
+
+    A = np.array([
+        [a1, b1],
+        [a2, b2]
+    ])
+
+    B = np.array([c1, c2])
+
+    det = np.linalg.det(A)
+
+    if abs(det) < 1e-10:
+        print("❌ No unique solution")
         return
-    
-    x = (c1*b2 - c2*b1) / det
-    y = (a1*c2 - a2*c1) / det
-    
-    print(f"✅ x = {x:.2f}, y = {y:.2f}")
-    add_to_history(f"System: x={x:.2f}, y={y:.2f}")
+
+    solution = np.linalg.solve(A, B)
+
+    x, y = solution
+
+    print(f"\n✅ x = {x:.4f}")
+    print(f"✅ y = {y:.4f}")
+
+    add_to_history(f"System → x={x:.4f}, y={y:.4f}")
 
 
-def derivative_check():
-    print("\n--- Derivative Checker ---")
-    print("Polynomial like: 3x² + 2x + 1")
-    
-    coeffs = input("Enter coefficients (highest degree first): ").strip().split()
-    
+# ---------------- CALCULUS ---------------- #
+
+def derivative_checker():
+    print("\n--- Derivative Calculator ---")
+
+    coeffs = input(
+        "Enter polynomial coefficients: "
+    ).split()
+
     try:
         coeffs = [float(c) for c in coeffs]
     except ValueError:
-        print("❌ numbers only")
+        print("❌ invalid input")
         return
-    
-    if len(coeffs) < 2:
-        print("❌ need at least 2 coefficients")
+
+    poly = np.poly1d(coeffs)
+    deriv = np.polyder(poly)
+
+    print(f"\n✅ Derivative:\n{deriv}")
+
+    add_to_history(f"Derivative of {coeffs} → {deriv}")
+
+
+def integral_calculator():
+    print("\n--- Integral Calculator ---")
+
+    coeffs = input(
+        "Enter polynomial coefficients: "
+    ).split()
+
+    try:
+        coeffs = [float(c) for c in coeffs]
+    except ValueError:
+        print("❌ invalid input")
         return
-    
-    deriv = []
-    degree = len(coeffs) - 1
-    
-    for i in range(degree):
-        deriv.append(coeffs[i] * (degree - i))
-    
-    print("Derivative: ", end="")
-    for i, coef in enumerate(deriv):
-        power = degree - i - 1
-        if power > 1:
-            print(f"{coef:.2f}x^{power}", end="")
-        elif power == 1:
-            print(f"{coef:.2f}x", end="")
-        else:
-            print(f"{coef:.2f}", end="")
-        
-        if i < len(deriv)-1 and deriv[i+1] >= 0:
-            print(" + ", end="")
-        elif i < len(deriv)-1:
-            print(" - ", end="")
-    
-    print("\n")
+
+    poly = np.poly1d(coeffs)
+    integ = np.polyint(poly)
+
+    print(f"\n✅ Integral:\n{integ}")
+
+    add_to_history(f"Integral of {coeffs} → {integ}")
+
+
+# ---------------- GRAPHING ---------------- #
+
+def graph_polynomial():
+    print("\n--- Polynomial Grapher ---")
+
+    coeffs = input(
+        "Enter coefficients: "
+    ).split()
+
+    try:
+        coeffs = [float(c) for c in coeffs]
+    except ValueError:
+        print("❌ invalid input")
+        return
+
+    poly = np.poly1d(coeffs)
+
+    x = np.linspace(-20, 20, 1000)
+    y = poly(x)
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(x, y)
+    plt.axhline(0)
+    plt.axvline(0)
+
+    plt.title("Polynomial Graph")
+    plt.xlabel("x")
+    plt.ylabel("y")
+
+    plt.grid(True)
+    plt.show()
+
+    add_to_history(f"Graphed polynomial {coeffs}")
+
+
+# ---------------- SCIENTIFIC CALCULATOR ---------------- #
+
+def scientific_calculator():
+    print("\n--- Scientific Calculator ---")
+    print("Examples:")
+    print("sin(1)")
+    print("sqrt(25)")
+    print("2**8 + log(100,10)")
+
+    expr = input("\nExpression: ")
+
+    allowed = {
+        "sin": math.sin,
+        "cos": math.cos,
+        "tan": math.tan,
+        "sqrt": math.sqrt,
+        "log": math.log,
+        "pi": math.pi,
+        "e": math.e
+    }
+
+    try:
+        result = eval(expr, {"__builtins__": {}}, allowed)
+
+        print(f"\n✅ Result = {result}")
+
+        add_to_history(f"Calc: {expr} = {result}")
+
+    except Exception:
+        print("❌ invalid expression")
 
 
 # ---------------- MENU ---------------- #
 
 def show_menu():
-    print("\n" + "="*40)
-    print("1 - Linear (ax + b = 0)")
-    print("2 - Quadratic (ax² + bx + c = 0)")
-    print("3 - Cubic (ax³ + bx² + cx + d = 0)")
-    print("4 - Polynomial (any degree)")
-    print("5 - System of 2 equations")
-    print("6 - Derivative checker")
-    print("7 - Show history")
-    print("8 - Clear history")
-    print("9 - Exit")
-    print("="*40)
+    print("\n" + "=" * 45)
+    print("🧮 EQUATION SOLVER v8")
+    print("=" * 45)
 
+    print("1  - Linear Solver")
+    print("2  - Quadratic Solver")
+    print("3  - Polynomial Solver")
+    print("4  - System Solver")
+    print("5  - Derivative Calculator")
+    print("6  - Integral Calculator")
+    print("7  - Graph Polynomial")
+    print("8  - Scientific Calculator")
+    print("9  - Show History")
+    print("10 - Clear History")
+    print("11 - Export History")
+    print("0  - Exit")
+
+    print("=" * 45)
+
+
+# ---------------- MAIN ---------------- #
 
 def main():
     load_history()
 
-    print("🧮 Equation Solver v7")
-    print("for when you're too lazy to do math by hand")
+    print("🧠 Math Utility Toolkit")
 
     while True:
         show_menu()
+
         choice = input(">> ").strip()
 
         if choice == "1":
             solve_linear()
+
         elif choice == "2":
             solve_quadratic()
+
         elif choice == "3":
-            solve_cubic()
-        elif choice == "4":
             solve_polynomial()
-        elif choice == "5":
+
+        elif choice == "4":
             solve_system()
+
+        elif choice == "5":
+            derivative_checker()
+
         elif choice == "6":
-            derivative_check()
+            integral_calculator()
+
         elif choice == "7":
-            show_history()
+            graph_polynomial()
+
         elif choice == "8":
-            clear_history()
+            scientific_calculator()
+
         elif choice == "9":
-            print("\n👋 bye")
+            show_history()
+
+        elif choice == "10":
+            clear_history()
+
+        elif choice == "11":
+            export_history()
+
+        elif choice == "0":
+            print("\n👋 goodbye")
             break
+
         else:
-            print("❌ not an option")
+            print("❌ invalid option")
+
+        pause()
 
 
 if __name__ == "__main__":
