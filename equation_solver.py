@@ -1,7 +1,7 @@
 import math
 import numpy as np
 
-# ---------------- HELPERS ---------------- #
+
 
 def get_number(prompt):
     while True:
@@ -20,7 +20,6 @@ def format_complex(num):
     return f"{num.real:.4f} {sign} {abs(num.imag):.4f}j"
 
 
-# ---------------- LINEAR SOLVER ---------------- #
 
 def solve_linear():
     print("\n--- Linear Equation ---")
@@ -38,7 +37,6 @@ def solve_linear():
     print(f"\n✅ x = {x:.4f}")
 
 
-# ---------------- QUADRATIC SOLVER ---------------- #
 
 def solve_quadratic():
     print("\n--- Quadratic Equation ---")
@@ -80,7 +78,7 @@ def solve_quadratic():
     print(f"x2 = {format_complex(x2)}")
 
 
-# ---------------- CUBIC SOLVER ---------------- #
+
 
 def solve_cubic():
     print("\n--- Cubic Equation Solver ---")
@@ -102,7 +100,6 @@ def solve_cubic():
         print(f"x{i} = {clean}")
 
 
-# ---------------- POLYNOMIAL SOLVER ---------------- #
 
 def solve_polynomial():
     print("\n--- Polynomial Solver ---")
@@ -127,7 +124,6 @@ def solve_polynomial():
         print(f"x{i} = {clean}")
 
 
-# ---------------- SYSTEM SOLVER ---------------- #
 
 def solve_system():
     print("\n--- 2x2 System Solver ---")
