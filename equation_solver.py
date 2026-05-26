@@ -1,172 +1,216 @@
-# ===================== EXTRA FEATURES PACK =====================
+import math
+import numpy as np
 
-import string
-import time
+# ---------------- HELPERS ---------------- #
 
-# ===================== PASSWORD GENERATOR =====================
+def get_number(prompt):
+    while True:
+        try:
+            return float(input(prompt))
+        except ValueError:
+            print("❌ invalid number")
 
-def password_generator():
-    print(Fore.CYAN + "\n--- Password Generator ---")
 
-    length = int(get_number("Password length: "))
+def format_complex(num):
+    if abs(num.imag) < 1e-6:
+        return f"{num.real:.4f}"
 
-    chars = (
-        string.ascii_letters +
-        string.digits +
-        string.punctuation
-    )
+    sign = "+" if num.imag >= 0 else "-"
 
-    password = "".join(random.choice(chars) for _ in range(length))
+    return f"{num.real:.4f} {sign} {abs(num.imag):.4f}j"
 
-    print(Fore.GREEN + f"\n✅ Generated Password:\n{password}")
 
-    add_to_history(f"Generated password of length {length}")
+# ---------------- LINEAR SOLVER ---------------- #
 
-# ===================== RANDOM NUMBER GENERATOR =====================
+def solve_linear():
+    print("\n--- Linear Equation ---")
+    print("ax + b = 0")
 
-def random_number_generator():
-    print(Fore.CYAN + "\n--- Random Number Generator ---")
+    a = get_number("a = ")
+    b = get_number("b = ")
 
-    start = int(get_number("Start: "))
-    end = int(get_number("End: "))
+    if a == 0:
+        print("❌ a cannot be 0")
+        return
 
-    number = random.randint(start, end)
+    x = -b / a
 
-    print(Fore.GREEN + f"\n🎲 Random Number = {number}")
+    print(f"\n✅ x = {x:.4f}")
 
-    add_to_history(f"Random number between {start}-{end} → {number}")
 
-# ===================== STOPWATCH =====================
+# ---------------- QUADRATIC SOLVER ---------------- #
 
-def stopwatch():
-    print(Fore.CYAN + "\n--- Stopwatch ---")
+def solve_quadratic():
+    print("\n--- Quadratic Equation ---")
+    print("ax² + bx + c = 0")
 
-    input("Press ENTER to start...")
+    a = get_number("a = ")
+    b = get_number("b = ")
+    c = get_number("c = ")
 
-    start = time.time()
+    if a == 0:
+        print("❌ Use linear solver")
+        return
 
-    input("Press ENTER to stop...")
+    d = b**2 - 4*a*c
 
-    end = time.time()
+    print(f"\nDiscriminant = {d:.4f}")
 
-    elapsed = end - start
+    if d > 0:
+        print("Two real roots")
 
-    print(Fore.GREEN + f"\n⏱ Time: {elapsed:.2f} seconds")
-
-    add_to_history(f"Stopwatch used → {elapsed:.2f}s")
-
-# ===================== BMI CALCULATOR =====================
-
-def bmi_calculator():
-    print(Fore.CYAN + "\n--- BMI Calculator ---")
-
-    weight = get_number("Weight (kg): ")
-    height = get_number("Height (meters): ")
-
-    bmi = weight / (height ** 2)
-
-    print(Fore.GREEN + f"\n✅ BMI = {bmi:.2f}")
-
-    if bmi < 18.5:
-        print(Fore.YELLOW + "Underweight")
-
-    elif bmi < 25:
-        print(Fore.GREEN + "Normal weight")
-
-    elif bmi < 30:
-        print(Fore.YELLOW + "Overweight")
+    elif d == 0:
+        print("One repeated root")
 
     else:
-        print(Fore.RED + "Obese")
+        print("Complex roots")
 
-    add_to_history(f"BMI calculated → {bmi:.2f}")
+    if d >= 0:
+        x1 = (-b + math.sqrt(d)) / (2*a)
+        x2 = (-b - math.sqrt(d)) / (2*a)
 
-# ===================== AGE CALCULATOR =====================
+    else:
+        real = -b / (2*a)
+        imag = math.sqrt(-d) / (2*a)
 
-def age_calculator():
-    print(Fore.CYAN + "\n--- Age Calculator ---")
+        x1 = complex(real, imag)
+        x2 = complex(real, -imag)
 
-    birth_year = int(get_number("Birth year: "))
+    print(f"x1 = {format_complex(x1)}")
+    print(f"x2 = {format_complex(x2)}")
 
-    current_year = datetime.now().year
 
-    age = current_year - birth_year
+# ---------------- CUBIC SOLVER ---------------- #
 
-    print(Fore.GREEN + f"\n🎂 You are {age} years old")
+def solve_cubic():
+    print("\n--- Cubic Equation Solver ---")
+    print("ax³ + bx² + cx + d = 0")
 
-    add_to_history(f"Age calculated → {age}")
+    a = get_number("a = ")
+    b = get_number("b = ")
+    c = get_number("c = ")
+    d = get_number("d = ")
 
-# ===================== COUNTDOWN TIMER =====================
+    coeffs = [a, b, c, d]
 
-def countdown_timer():
-    print(Fore.CYAN + "\n--- Countdown Timer ---")
+    roots = np.roots(coeffs)
 
-    seconds = int(get_number("Seconds: "))
+    print("\n✅ Roots")
 
-    while seconds > 0:
-        print(f"\r⏳ {seconds} seconds remaining...", end="")
-        time.sleep(1)
-        seconds -= 1
+    for i, root in enumerate(roots, 1):
+        clean = format_complex(root)
+        print(f"x{i} = {clean}")
 
-    print(Fore.GREEN + "\n\n⏰ TIME'S UP!")
 
-    add_to_history("Countdown timer completed")
+# ---------------- POLYNOMIAL SOLVER ---------------- #
 
-# ===================== DICE ROLLER =====================
+def solve_polynomial():
+    print("\n--- Polynomial Solver ---")
+    print("Example:")
+    print("2x² + 3x + 1 → 2 3 1")
 
-def dice_roller():
-    print(Fore.CYAN + "\n--- Dice Roller ---")
+    coeffs = input("\nCoefficients: ").split()
 
-    dice = random.randint(1, 6)
+    try:
+        coeffs = [float(x) for x in coeffs]
 
-    print(Fore.GREEN + f"\n🎲 You rolled: {dice}")
+    except ValueError:
+        print("❌ numbers only")
+        return
 
-    add_to_history(f"Dice rolled → {dice}")
+    roots = np.roots(coeffs)
 
-# ===================== COIN FLIP =====================
+    print("\n✅ Roots")
 
-def coin_flip():
-    print(Fore.CYAN + "\n--- Coin Flip ---")
+    for i, root in enumerate(roots, 1):
+        clean = format_complex(root)
+        print(f"x{i} = {clean}")
 
-    result = random.choice(["Heads", "Tails"])
 
-    print(Fore.GREEN + f"\n🪙 {result}")
+# ---------------- SYSTEM SOLVER ---------------- #
 
-    add_to_history(f"Coin flip → {result}")
+def solve_system():
+    print("\n--- 2x2 System Solver ---")
 
-# ===================== ADD THESE TO MENU =====================
+    print("\na1*x + b1*y = c1")
+    print("a2*x + b2*y = c2")
 
-print("19 - Password Generator")
-print("20 - Random Number Generator")
-print("21 - Stopwatch")
-print("22 - BMI Calculator")
-print("23 - Age Calculator")
-print("24 - Countdown Timer")
-print("25 - Dice Roller")
-print("26 - Coin Flip")
+    a1 = get_number("a1 = ")
+    b1 = get_number("b1 = ")
+    c1 = get_number("c1 = ")
 
-# ===================== ADD THESE TO main() =====================
+    a2 = get_number("a2 = ")
+    b2 = get_number("b2 = ")
+    c2 = get_number("c2 = ")
 
-elif choice == "19":
-    password_generator()
+    A = np.array([
+        [a1, b1],
+        [a2, b2]
+    ])
 
-elif choice == "20":
-    random_number_generator()
+    B = np.array([c1, c2])
 
-elif choice == "21":
-    stopwatch()
+    det = np.linalg.det(A)
 
-elif choice == "22":
-    bmi_calculator()
+    if abs(det) < 1e-10:
+        print("❌ No unique solution")
+        return
 
-elif choice == "23":
-    age_calculator()
+    solution = np.linalg.solve(A, B)
 
-elif choice == "24":
-    countdown_timer()
+    x, y = solution
 
-elif choice == "25":
-    dice_roller()
+    print(f"\n✅ x = {x:.4f}")
+    print(f"✅ y = {y:.4f}")
 
-elif choice == "26":
-    coin_flip()
+
+# ---------------- MENU ---------------- #
+
+def show_menu():
+    print("\n" + "=" * 50)
+    print("🧮 EQUATION SOLVER")
+    print("=" * 50)
+
+    print("1 - Linear Solver")
+    print("2 - Quadratic Solver")
+    print("3 - Cubic Solver")
+    print("4 - Polynomial Solver")
+    print("5 - System Solver")
+    print("0 - Exit")
+
+    print("=" * 50)
+
+
+# ---------------- MAIN ---------------- #
+
+def main():
+    while True:
+        show_menu()
+
+        choice = input(">> ").strip()
+
+        if choice == "1":
+            solve_linear()
+
+        elif choice == "2":
+            solve_quadratic()
+
+        elif choice == "3":
+            solve_cubic()
+
+        elif choice == "4":
+            solve_polynomial()
+
+        elif choice == "5":
+            solve_system()
+
+        elif choice == "0":
+            print("\n👋 goodbye")
+            break
+
+        else:
+            print("❌ invalid option")
+
+
+if __name__ == "__main__":
+    main()
