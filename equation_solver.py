@@ -1,228 +1,172 @@
-import math
-import numpy as np
-import os
-import json
-import sympy as sp
-import matplotlib.pyplot as plt
-from statistics import mode
-from datetime import datetime
-import random
-from colorama import Fore, Style, init
+# ===================== EXTRA FEATURES PACK =====================
 
-init(autoreset=True)
+import string
+import time
 
-history = []
-HISTORY_FILE = "history.txt"
+# ===================== PASSWORD GENERATOR =====================
 
+def password_generator():
+    print(Fore.CYAN + "\n--- Password Generator ---")
 
-# ---------------- BANNER ---------------- #
+    length = int(get_number("Password length: "))
 
-def banner():
-    quotes = [
-        "Pure mathematics is the poetry of logical ideas.",
-        "Mathematics is the language of the universe.",
-        "Without mathematics, there’s nothing you can do.",
-        "Math is power.",
-        "Numbers rule everything around us."
-    ]
+    chars = (
+        string.ascii_letters +
+        string.digits +
+        string.punctuation
+    )
 
-    print(Fore.MAGENTA + "=" * 60)
-    print(Fore.YELLOW + "🧠 ADVANCED MATH UTILITY TOOLKIT")
-    print(Fore.CYAN + "Version 10.0")
-    print(Fore.GREEN + random.choice(quotes))
-    print(Fore.MAGENTA + "=" * 60)
+    password = "".join(random.choice(chars) for _ in range(length))
 
+    print(Fore.GREEN + f"\n✅ Generated Password:\n{password}")
 
-# ---------------- HELPERS ---------------- #
+    add_to_history(f"Generated password of length {length}")
 
-def get_number(prompt):
-    while True:
-        try:
-            return float(input(prompt))
-        except ValueError:
-            print(Fore.RED + "❌ invalid number")
+# ===================== RANDOM NUMBER GENERATOR =====================
 
+def random_number_generator():
+    print(Fore.CYAN + "\n--- Random Number Generator ---")
 
-def format_complex(num):
-    if abs(num.imag) < 1e-6:
-        return f"{num.real:.4f}"
+    start = int(get_number("Start: "))
+    end = int(get_number("End: "))
 
-    sign = "+" if num.imag >= 0 else "-"
+    number = random.randint(start, end)
 
-    return f"{num.real:.4f} {sign} {abs(num.imag):.4f}j"
+    print(Fore.GREEN + f"\n🎲 Random Number = {number}")
 
+    add_to_history(f"Random number between {start}-{end} → {number}")
 
-def pause():
-    input("\nPress ENTER to continue...")
+# ===================== STOPWATCH =====================
 
+def stopwatch():
+    print(Fore.CYAN + "\n--- Stopwatch ---")
 
-# ---------------- HISTORY ---------------- #
+    input("Press ENTER to start...")
 
-def load_history():
-    if os.path.exists(HISTORY_FILE):
-        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-            history.clear()
-            history.extend(line.strip() for line in f)
+    start = time.time()
 
+    input("Press ENTER to stop...")
 
-def save_history():
-    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-        for item in history:
-            f.write(item + "\n")
+    end = time.time()
 
+    elapsed = end - start
 
-def add_to_history(entry):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    history.append(f"[{timestamp}] {entry}")
-    save_history()
+    print(Fore.GREEN + f"\n⏱ Time: {elapsed:.2f} seconds")
 
+    add_to_history(f"Stopwatch used → {elapsed:.2f}s")
 
-def show_history():
-    if not history:
-        print(Fore.RED + "\n📭 No history")
-        return
+# ===================== BMI CALCULATOR =====================
 
-    print(Fore.CYAN + "\n📜 History")
-    print("-" * 50)
+def bmi_calculator():
+    print(Fore.CYAN + "\n--- BMI Calculator ---")
 
-    for i, item in enumerate(history, 1):
-        print(f"{i}. {item}")
+    weight = get_number("Weight (kg): ")
+    height = get_number("Height (meters): ")
 
+    bmi = weight / (height ** 2)
 
-def clear_history():
-    history.clear()
-    save_history()
-    print(Fore.GREEN + "🧹 History cleared")
+    print(Fore.GREEN + f"\n✅ BMI = {bmi:.2f}")
 
+    if bmi < 18.5:
+        print(Fore.YELLOW + "Underweight")
 
-def export_history():
-    with open("history_export.json", "w", encoding="utf-8") as f:
-        json.dump(history, f, indent=4)
+    elif bmi < 25:
+        print(Fore.GREEN + "Normal weight")
 
-    print(Fore.GREEN + "✅ Exported to history_export.json")
-
-
-# ---------------- PRIME CHECKER ---------------- #
-
-def prime_checker():
-    print(Fore.CYAN + "\n--- Prime Number Checker ---")
-
-    num = int(get_number("Enter integer: "))
-
-    if num < 2:
-        print(Fore.RED + "❌ Not prime")
-        return
-
-    for i in range(2, int(math.sqrt(num)) + 1):
-        if num % i == 0:
-            print(Fore.RED + f"❌ {num} is NOT prime")
-            add_to_history(f"Prime check: {num} → NOT prime")
-            return
-
-    print(Fore.GREEN + f"✅ {num} is PRIME")
-    add_to_history(f"Prime check: {num} → PRIME")
-
-
-# ---------------- UNIT CONVERTER ---------------- #
-
-def unit_converter():
-    print(Fore.CYAN + "\n--- Unit Converter ---")
-
-    print("1 - Celsius to Fahrenheit")
-    print("2 - Fahrenheit to Celsius")
-    print("3 - KM to Miles")
-    print("4 - Miles to KM")
-
-    choice = input("Choice: ")
-
-    if choice == "1":
-        c = get_number("Celsius: ")
-        f = (c * 9/5) + 32
-        print(Fore.GREEN + f"✅ Fahrenheit = {f:.2f}")
-
-    elif choice == "2":
-        f = get_number("Fahrenheit: ")
-        c = (f - 32) * 5/9
-        print(Fore.GREEN + f"✅ Celsius = {c:.2f}")
-
-    elif choice == "3":
-        km = get_number("Kilometers: ")
-        miles = km * 0.621371
-        print(Fore.GREEN + f"✅ Miles = {miles:.2f}")
-
-    elif choice == "4":
-        miles = get_number("Miles: ")
-        km = miles / 0.621371
-        print(Fore.GREEN + f"✅ Kilometers = {km:.2f}")
+    elif bmi < 30:
+        print(Fore.YELLOW + "Overweight")
 
     else:
-        print(Fore.RED + "❌ Invalid option")
+        print(Fore.RED + "Obese")
 
+    add_to_history(f"BMI calculated → {bmi:.2f}")
 
-# ---------------- MENU ---------------- #
+# ===================== AGE CALCULATOR =====================
 
-def show_menu():
-    print("\n" + "=" * 50)
-    print(Fore.YELLOW + "🧮 EQUATION SOLVER v10")
-    print("=" * 50)
+def age_calculator():
+    print(Fore.CYAN + "\n--- Age Calculator ---")
 
-    print("1  - Linear Solver")
-    print("2  - Quadratic Solver")
-    print("3  - Cubic Solver")
-    print("4  - Polynomial Solver")
-    print("5  - System Solver")
-    print("6  - Derivative Calculator")
-    print("7  - Integral Calculator")
-    print("8  - Newton Method")
-    print("9  - Matrix Toolkit")
-    print("10 - Statistics Toolkit")
-    print("11 - Complex Toolkit")
-    print("12 - Graph Polynomial")
-    print("13 - Scientific Calculator")
-    print("14 - Show History")
-    print("15 - Clear History")
-    print("16 - Export History")
-    print("17 - Prime Checker")
-    print("18 - Unit Converter")
-    print("0  - Exit")
+    birth_year = int(get_number("Birth year: "))
 
-    print("=" * 50)
+    current_year = datetime.now().year
 
+    age = current_year - birth_year
 
-# ---------------- MAIN ---------------- #
+    print(Fore.GREEN + f"\n🎂 You are {age} years old")
 
-def main():
-    load_history()
+    add_to_history(f"Age calculated → {age}")
 
-    banner()
+# ===================== COUNTDOWN TIMER =====================
 
-    while True:
-        show_menu()
+def countdown_timer():
+    print(Fore.CYAN + "\n--- Countdown Timer ---")
 
-        choice = input(">> ").strip()
+    seconds = int(get_number("Seconds: "))
 
-        if choice == "17":
-            prime_checker()
+    while seconds > 0:
+        print(f"\r⏳ {seconds} seconds remaining...", end="")
+        time.sleep(1)
+        seconds -= 1
 
-        elif choice == "18":
-            unit_converter()
+    print(Fore.GREEN + "\n\n⏰ TIME'S UP!")
 
-        elif choice == "0":
-            print(Fore.GREEN + "\n👋 goodbye")
-            break
+    add_to_history("Countdown timer completed")
 
-        else:
-            print(Fore.RED + "❌ Keep your old menu logic here + new features added")
+# ===================== DICE ROLLER =====================
 
-        pause()
+def dice_roller():
+    print(Fore.CYAN + "\n--- Dice Roller ---")
 
+    dice = random.randint(1, 6)
 
-if __name__ == "__main__":
-    main()
-```
+    print(Fore.GREEN + f"\n🎲 You rolled: {dice}")
 
-Install dependency:
+    add_to_history(f"Dice rolled → {dice}")
 
-```bash
-pip install colorama
-```
+# ===================== COIN FLIP =====================
+
+def coin_flip():
+    print(Fore.CYAN + "\n--- Coin Flip ---")
+
+    result = random.choice(["Heads", "Tails"])
+
+    print(Fore.GREEN + f"\n🪙 {result}")
+
+    add_to_history(f"Coin flip → {result}")
+
+# ===================== ADD THESE TO MENU =====================
+
+print("19 - Password Generator")
+print("20 - Random Number Generator")
+print("21 - Stopwatch")
+print("22 - BMI Calculator")
+print("23 - Age Calculator")
+print("24 - Countdown Timer")
+print("25 - Dice Roller")
+print("26 - Coin Flip")
+
+# ===================== ADD THESE TO main() =====================
+
+elif choice == "19":
+    password_generator()
+
+elif choice == "20":
+    random_number_generator()
+
+elif choice == "21":
+    stopwatch()
+
+elif choice == "22":
+    bmi_calculator()
+
+elif choice == "23":
+    age_calculator()
+
+elif choice == "24":
+    countdown_timer()
+
+elif choice == "25":
+    dice_roller()
+
+elif choice == "26":
+    coin_flip()
