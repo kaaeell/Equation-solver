@@ -8,9 +8,6 @@ from colorama import Fore, Style, init
 
 init(autoreset=True)
 
-# =========================================================
-# ADVANCED EQUATION SOLVER PRO 2026
-# =========================================================
 
 history = []
 HISTORY_FILE = "history.json"
@@ -42,7 +39,6 @@ def clear():
     os.system("cls" if os.name == "nt" else "clear")
 
 
-# ===================== BANNER =====================
 
 def banner():
     quotes = [
@@ -60,7 +56,6 @@ def banner():
     print(Fore.CYAN + "=" * 65)
 
 
-# ===================== HISTORY =====================
 
 def load_history():
     if os.path.exists(HISTORY_FILE):
@@ -107,7 +102,6 @@ def clear_history():
     print(Fore.GREEN + "✅ History cleared")
 
 
-# ===================== LINEAR =====================
 
 def solve_linear():
     print(Fore.CYAN + "\n--- Linear Equation ---")
@@ -127,7 +121,6 @@ def solve_linear():
     add_to_history(f"Linear: x = {x:.6f}")
 
 
-# ===================== QUADRATIC =====================
 
 def solve_quadratic():
     print(Fore.CYAN + "\n--- Quadratic Equation ---")
@@ -163,7 +156,7 @@ def solve_quadratic():
     )
 
 
-# ===================== CUBIC =====================
+
 
 def solve_cubic():
     print(Fore.CYAN + "\n--- Cubic Equation ---")
