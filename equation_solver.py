@@ -2,12 +2,15 @@ import math
 import numpy as np
 import os
 import json
+import random
 from datetime import datetime
 from colorama import Fore, Style, init
 
 init(autoreset=True)
 
-# ===================== HISTORY =====================
+# =========================================================
+# ADVANCED EQUATION SOLVER PRO 2026
+# =========================================================
 
 history = []
 HISTORY_FILE = "history.json"
@@ -35,13 +38,29 @@ def pause():
     input(Fore.YELLOW + "\nPress ENTER to continue...")
 
 
-def banner():
-    print(Fore.CYAN + "=" * 60)
-    print(Fore.YELLOW + "🧠 ADVANCED EQUATION SOLVER 2026")
-    print(Fore.GREEN + "Linear • Quadratic • Cubic • Polynomial • Systems")
-    print(Fore.CYAN + "=" * 60)
+def clear():
+    os.system("cls" if os.name == "nt" else "clear")
 
-# ===================== HISTORY FUNCTIONS =====================
+
+# ===================== BANNER =====================
+
+def banner():
+    quotes = [
+        "Mathematics is the language of the universe.",
+        "Numbers rule everything around us.",
+        "Pure mathematics is logical beauty.",
+        "Solve problems. Build logic. Repeat."
+    ]
+
+    clear()
+
+    print(Fore.CYAN + "=" * 65)
+    print(Fore.YELLOW + "🧠 ADVANCED EQUATION SOLVER PRO 2026")
+    print(Fore.GREEN + random.choice(quotes))
+    print(Fore.CYAN + "=" * 65)
+
+
+# ===================== HISTORY =====================
 
 def load_history():
     if os.path.exists(HISTORY_FILE):
@@ -74,13 +93,21 @@ def show_history():
         print(Fore.RED + "\n📭 No history")
         return
 
-    print(Fore.CYAN + "\n📜 History")
-    print("-" * 50)
+    print(Fore.CYAN + "\n📜 HISTORY")
+    print("-" * 60)
 
     for i, item in enumerate(history, 1):
         print(f"{i}. [{item['time']}] {item['result']}")
 
-# ===================== LINEAR SOLVER =====================
+
+def clear_history():
+    history.clear()
+    save_history()
+
+    print(Fore.GREEN + "✅ History cleared")
+
+
+# ===================== LINEAR =====================
 
 def solve_linear():
     print(Fore.CYAN + "\n--- Linear Equation ---")
@@ -97,9 +124,10 @@ def solve_linear():
 
     print(Fore.GREEN + f"\n✅ x = {x:.6f}")
 
-    add_to_history(f"Linear → x = {x:.6f}")
+    add_to_history(f"Linear: x = {x:.6f}")
 
-# ===================== QUADRATIC SOLVER =====================
+
+# ===================== QUADRATIC =====================
 
 def solve_quadratic():
     print(Fore.CYAN + "\n--- Quadratic Equation ---")
@@ -131,13 +159,14 @@ def solve_quadratic():
     print(Fore.GREEN + f"x2 = {format_complex(x2)}")
 
     add_to_history(
-        f"Quadratic → x1={format_complex(x1)}, x2={format_complex(x2)}"
+        f"Quadratic: x1={format_complex(x1)}, x2={format_complex(x2)}"
     )
 
-# ===================== CUBIC SOLVER =====================
+
+# ===================== CUBIC =====================
 
 def solve_cubic():
-    print(Fore.CYAN + "\n--- Cubic Equation Solver ---")
+    print(Fore.CYAN + "\n--- Cubic Equation ---")
     print("ax³ + bx² + cx + d = 0")
 
     a = get_number("a = ")
@@ -145,29 +174,28 @@ def solve_cubic():
     c = get_number("c = ")
     d = get_number("d = ")
 
-    coeffs = [a, b, c, d]
-
-    roots = np.roots(coeffs)
+    roots = np.roots([a, b, c, d])
 
     print(Fore.GREEN + "\n✅ Roots")
 
     for i, root in enumerate(roots, 1):
         print(f"x{i} = {format_complex(root)}")
 
-    add_to_history(f"Cubic → {roots.tolist()}")
+    add_to_history(f"Cubic roots = {roots.tolist()}")
 
-# ===================== POLYNOMIAL SOLVER =====================
+
+# ===================== POLYNOMIAL =====================
 
 def solve_polynomial():
     print(Fore.CYAN + "\n--- Polynomial Solver ---")
-    print("Example: 2x² + 3x + 1 → 2 3 1")
+    print("Example: 1 -6 11 -6")
 
     coeffs = input("\nCoefficients: ").split()
 
     try:
-        coeffs = [float(x) for x in coeffs]
-    except ValueError:
-        print(Fore.RED + "❌ Numbers only")
+        coeffs = [float(c) for c in coeffs]
+    except:
+        print(Fore.RED + "❌ Invalid coefficients")
         return
 
     roots = np.roots(coeffs)
@@ -177,7 +205,8 @@ def solve_polynomial():
     for i, root in enumerate(roots, 1):
         print(f"x{i} = {format_complex(root)}")
 
-    add_to_history(f"Polynomial → {roots.tolist()}")
+    add_to_history(f"Polynomial roots = {roots.tolist()}")
+
 
 # ===================== SYSTEM SOLVER =====================
 
@@ -208,31 +237,87 @@ def solve_system():
         print(Fore.RED + "❌ No unique solution")
         return
 
-    solution = np.linalg.solve(A, B)
-
-    x, y = solution
+    x, y = np.linalg.solve(A, B)
 
     print(Fore.GREEN + f"\n✅ x = {x:.6f}")
     print(Fore.GREEN + f"✅ y = {y:.6f}")
 
-    add_to_history(f"System → x={x:.6f}, y={y:.6f}")
+    add_to_history(f"System solution = ({x:.6f}, {y:.6f})")
+
+
+# ===================== FACTORIAL =====================
+
+def factorial_calculator():
+    print(Fore.CYAN + "\n--- Factorial Calculator ---")
+
+    n = int(get_number("n = "))
+
+    if n < 0:
+        print(Fore.RED + "❌ Cannot use negative numbers")
+        return
+
+    result = math.factorial(n)
+
+    print(Fore.GREEN + f"\n✅ {n}! = {result}")
+
+    add_to_history(f"{n}! = {result}")
+
+
+# ===================== PRIME CHECKER =====================
+
+def prime_checker():
+    print(Fore.CYAN + "\n--- Prime Checker ---")
+
+    n = int(get_number("Number = "))
+
+    if n < 2:
+        print(Fore.RED + "❌ Not prime")
+        return
+
+    for i in range(2, int(math.sqrt(n)) + 1):
+        if n % i == 0:
+            print(Fore.RED + f"❌ {n} is NOT prime")
+            return
+
+    print(Fore.GREEN + f"✅ {n} is PRIME")
+
+    add_to_history(f"Prime checked = {n}")
+
+
+# ===================== RANDOM MATH FACT =====================
+
+def math_fact():
+    facts = [
+        "Zero is the only number that cannot be represented in Roman numerals.",
+        "A circle has infinite lines of symmetry.",
+        "Pi is irrational.",
+        "Prime numbers never end.",
+        "The word hundred comes from old Norse meaning 120."
+    ]
+
+    print(Fore.MAGENTA + "\n📘 RANDOM MATH FACT")
+    print(Fore.YELLOW + random.choice(facts))
+
 
 # ===================== MENU =====================
 
 def show_menu():
-    print("\n" + "=" * 50)
-    print(Fore.YELLOW + "🧮 EQUATION SOLVER MENU")
-    print("=" * 50)
+    print("\n" + "=" * 60)
 
-    print("1 - Linear Solver")
-    print("2 - Quadratic Solver")
-    print("3 - Cubic Solver")
-    print("4 - Polynomial Solver")
-    print("5 - System Solver")
-    print("6 - Show History")
-    print("0 - Exit")
+    print("1  - Linear Solver")
+    print("2  - Quadratic Solver")
+    print("3  - Cubic Solver")
+    print("4  - Polynomial Solver")
+    print("5  - System Solver")
+    print("6  - Factorial Calculator")
+    print("7  - Prime Checker")
+    print("8  - Show History")
+    print("9  - Clear History")
+    print("10 - Random Math Fact")
+    print("0  - Exit")
 
-    print("=" * 50)
+    print("=" * 60)
+
 
 # ===================== MAIN =====================
 
@@ -244,7 +329,7 @@ def main():
     while True:
         show_menu()
 
-        choice = input(">> ").strip()
+        choice = input(Fore.CYAN + ">> ").strip()
 
         if choice == "1":
             solve_linear()
@@ -262,7 +347,19 @@ def main():
             solve_system()
 
         elif choice == "6":
+            factorial_calculator()
+
+        elif choice == "7":
+            prime_checker()
+
+        elif choice == "8":
             show_history()
+
+        elif choice == "9":
+            clear_history()
+
+        elif choice == "10":
+            math_fact()
 
         elif choice == "0":
             print(Fore.GREEN + "\n👋 Goodbye")
