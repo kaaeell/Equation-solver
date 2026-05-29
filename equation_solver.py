@@ -8,6 +8,9 @@ from colorama import Fore, Style, init
 
 init(autoreset=True)
 
+# =========================================================
+# ADVANCED EQUATION SOLVER PRO 2026
+# =========================================================
 
 history = []
 HISTORY_FILE = "history.json"
@@ -39,6 +42,7 @@ def clear():
     os.system("cls" if os.name == "nt" else "clear")
 
 
+# ===================== BANNER =====================
 
 def banner():
     quotes = [
@@ -56,6 +60,7 @@ def banner():
     print(Fore.CYAN + "=" * 65)
 
 
+# ===================== HISTORY =====================
 
 def load_history():
     if os.path.exists(HISTORY_FILE):
@@ -102,6 +107,7 @@ def clear_history():
     print(Fore.GREEN + "✅ History cleared")
 
 
+# ===================== LINEAR =====================
 
 def solve_linear():
     print(Fore.CYAN + "\n--- Linear Equation ---")
@@ -121,6 +127,7 @@ def solve_linear():
     add_to_history(f"Linear: x = {x:.6f}")
 
 
+# ===================== QUADRATIC =====================
 
 def solve_quadratic():
     print(Fore.CYAN + "\n--- Quadratic Equation ---")
@@ -156,7 +163,7 @@ def solve_quadratic():
     )
 
 
-
+# ===================== CUBIC =====================
 
 def solve_cubic():
     print(Fore.CYAN + "\n--- Cubic Equation ---")
@@ -277,6 +284,106 @@ def prime_checker():
     add_to_history(f"Prime checked = {n}")
 
 
+# ===================== MATRIX TOOLKIT =====================
+
+def matrix_toolkit():
+    print(Fore.CYAN + "\n--- Matrix Toolkit ---")
+
+    print("Enter a 2x2 matrix")
+
+    matrix = []
+
+    for i in range(2):
+        row = list(map(float, input(f"Row {i+1}: ").split()))
+
+        if len(row) != 2:
+            print(Fore.RED + "❌ Must enter exactly 2 numbers")
+            return
+
+        matrix.append(row)
+
+    matrix = np.array(matrix)
+
+    print(Fore.YELLOW + "\n📌 Matrix:")
+    print(matrix)
+
+    det = np.linalg.det(matrix)
+
+    print(Fore.GREEN + f"\n✅ Determinant = {det:.6f}")
+
+    if abs(det) > 1e-10:
+        inv = np.linalg.inv(matrix)
+
+        print(Fore.GREEN + "\n✅ Inverse Matrix:")
+        print(inv)
+
+    else:
+        print(Fore.RED + "\n❌ Matrix has no inverse")
+
+    print(Fore.GREEN + "\n✅ Transpose:")
+    print(matrix.T)
+
+    eigenvalues = np.linalg.eigvals(matrix)
+
+    print(Fore.GREEN + "\n✅ Eigenvalues:")
+    print(eigenvalues)
+
+    add_to_history(f"Matrix toolkit used on {matrix.tolist()}")
+
+
+# ===================== SCIENTIFIC CALCULATOR =====================
+
+def scientific_calculator():
+    print(Fore.CYAN + "\n--- Scientific Calculator ---")
+
+    print("Examples:")
+    print("sin(pi/2)")
+    print("sqrt(25)")
+    print("2**8 + log(100,10)")
+
+    expr = input("\nExpression: ")
+
+    allowed = {
+        "sin": math.sin,
+        "cos": math.cos,
+        "tan": math.tan,
+        "sqrt": math.sqrt,
+        "log": math.log,
+        "pi": math.pi,
+        "e": math.e,
+        "pow": pow,
+        "abs": abs
+    }
+
+    try:
+        result = eval(expr, {"__builtins__": {}}, allowed)
+
+        print(Fore.GREEN + f"\n✅ Result = {result}")
+
+        add_to_history(f"Scientific calc: {expr} = {result}")
+
+    except Exception:
+        print(Fore.RED + "❌ Invalid expression")
+
+
+# ===================== RANDOM EQUATION =====================
+
+def random_equation():
+    print(Fore.CYAN + "\n--- Random Equation Generator ---")
+
+    a = random.randint(1, 10)
+    b = random.randint(1, 20)
+
+    print(Fore.YELLOW + f"\nGenerated Equation:")
+    print(Fore.GREEN + f"{a}x + {b} = 0")
+
+    x = -b / a
+
+    print(Fore.CYAN + f"\n✅ Solution: x = {x:.4f}")
+
+    add_to_history(f"Random equation {a}x + {b} = 0")
+
+
 # ===================== RANDOM MATH FACT =====================
 
 def math_fact():
@@ -307,6 +414,9 @@ def show_menu():
     print("8  - Show History")
     print("9  - Clear History")
     print("10 - Random Math Fact")
+    print("11 - Matrix Toolkit")
+    print("12 - Scientific Calculator")
+    print("13 - Random Equation Generator")
     print("0  - Exit")
 
     print("=" * 60)
@@ -353,6 +463,15 @@ def main():
 
         elif choice == "10":
             math_fact()
+
+        elif choice == "11":
+            matrix_toolkit()
+
+        elif choice == "12":
+            scientific_calculator()
+
+        elif choice == "13":
+            random_equation()
 
         elif choice == "0":
             print(Fore.GREEN + "\n👋 Goodbye")
