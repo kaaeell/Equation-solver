@@ -86,7 +86,6 @@ def clear_history():
     save_history()
     print(Fore.GREEN + "✅ History cleared")
 
-# ===================== LINEAR =====================
 
 def solve_linear():
     print(Fore.CYAN + "\n--- Linear Equation ---")
@@ -100,7 +99,6 @@ def solve_linear():
     print(Fore.GREEN + f"\n✅ x = {x:.6f}")
     add_to_history(f"Linear: x = {x:.6f}")
 
-# ===================== QUADRATIC =====================
 
 def solve_quadratic():
     print(Fore.CYAN + "\n--- Quadratic Equation ---")
@@ -125,7 +123,6 @@ def solve_quadratic():
     print(Fore.GREEN + f"x2 = {format_complex(x2)}")
     add_to_history(f"Quadratic: x1={format_complex(x1)}, x2={format_complex(x2)}")
 
-# ===================== CUBIC =====================
 
 def solve_cubic():
     print(Fore.CYAN + "\n--- Cubic Equation ---")
@@ -140,7 +137,7 @@ def solve_cubic():
         print(f"x{i} = {format_complex(root)}")
     add_to_history(f"Cubic roots = {roots.tolist()}")
 
-# ===================== POLYNOMIAL =====================
+
 
 def solve_polynomial():
     print(Fore.CYAN + "\n--- Polynomial Solver ---")
@@ -157,7 +154,6 @@ def solve_polynomial():
         print(f"x{i} = {format_complex(root)}")
     add_to_history(f"Polynomial roots = {roots.tolist()}")
 
-# ===================== SYSTEM SOLVER =====================
 
 def solve_system():
     print(Fore.CYAN + "\n--- 2x2 System Solver ---")
@@ -179,9 +175,6 @@ def solve_system():
     print(Fore.GREEN + f"\n✅ x = {x:.6f}")
     print(Fore.GREEN + f"✅ y = {y:.6f}")
     add_to_history(f"System solution = ({x:.6f}, {y:.6f})")
-
-# ===================== FACTORIAL =====================
-
 def factorial_calculator():
     print(Fore.CYAN + "\n--- Factorial Calculator ---")
     n = int(get_number("n = "))
@@ -192,7 +185,6 @@ def factorial_calculator():
     print(Fore.GREEN + f"\n✅ {n}! = {result}")
     add_to_history(f"{n}! = {result}")
 
-# ===================== PRIME CHECKER =====================
 
 def prime_checker():
     print(Fore.CYAN + "\n--- Prime Checker ---")
@@ -207,7 +199,7 @@ def prime_checker():
     print(Fore.GREEN + f"✅ {n} is PRIME")
     add_to_history(f"Prime checked = {n}")
 
-# ===================== RANDOM MATH FACT =====================
+
 
 def math_fact():
     facts = [
@@ -220,7 +212,6 @@ def math_fact():
     print(Fore.MAGENTA + "\n📘 RANDOM MATH FACT")
     print(Fore.YELLOW + random.choice(facts))
 
-# ===================== NEW FEATURES =====================
 
 def graph_quadratic():
     print(Fore.CYAN + "\n--- Quadratic Graph ---")
