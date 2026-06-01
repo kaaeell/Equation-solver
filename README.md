@@ -99,3 +99,6 @@ Discriminant = 1.00
 Computer Science student exploring Python through small, practical projects.
 
 Focused on building clean, simple, and useful tools 🚀
+
+
+##btw the code is not perfect yet but i will make it perfect :)
