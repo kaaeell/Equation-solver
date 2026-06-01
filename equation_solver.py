@@ -272,3 +272,6 @@ def graph_quadratic():
 def percentage_calculator():
     print(Fore.CYAN + "\n--- Percentage Calculator ---")
     value = get
+
+
+#i finish it tomorrow :)
