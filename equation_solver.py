@@ -123,6 +123,46 @@ def solve_quadratic():
     print(Fore.GREEN + f"x2 = {format_complex(x2)}")
     add_to_history(f"Quadratic: x1={format_complex(x1)}, x2={format_complex(x2)}")
 
+def scientific_calculator():
+    print(Fore.CYAN + "\n--- Scientific Calculator ---")
+
+    while True:
+        expr = input("\nExpression (or 'back'): ")
+
+        if expr.lower() == "back":
+            break
+
+        try:
+            result = eval(expr)
+            print(Fore.GREEN + f"= {result}")
+            add_to_history(f"Calculator: {expr} = {result}")
+        except:
+            print(Fore.RED + "❌ Invalid expression")
+
+def matrix_operations():
+    print(Fore.CYAN + "\n--- Matrix Calculator ---")
+
+    rows = int(get_number("Rows: "))
+    cols = int(get_number("Cols: "))
+
+    matrix = []
+
+    for i in range(rows):
+        row = list(map(float, input(f"Row {i+1}: ").split()))
+        matrix.append(row)
+
+    M = np.array(matrix)
+
+    print("\nDeterminant:")
+
+    if rows == cols:
+        print(np.linalg.det(M))
+
+    print("\nTranspose:")
+    print(M.T)
+
+    add_to_history("Matrix operation performed")
+
 
 def solve_cubic():
     print(Fore.CYAN + "\n--- Cubic Equation ---")
@@ -136,6 +176,12 @@ def solve_cubic():
     for i, root in enumerate(roots, 1):
         print(f"x{i} = {format_complex(root)}")
     add_to_history(f"Cubic roots = {roots.tolist()}")
+
+
+def statistics_calculator():
+    print(Fore.CYAN + "\n--- Statistics ---")
+
+    data = list(map(float, input("Numbers
 
 
 
