@@ -9,9 +9,6 @@ import matplotlib.pyplot as plt
 
 init(autoreset=True)
 
-# =========================================================
-# ADVANCED EQUATION SOLVER PRO 2026
-# =========================================================
 
 history = []
 HISTORY_FILE = "history.json"
@@ -37,7 +34,6 @@ def pause():
 def clear():
     os.system("cls" if os.name == "nt" else "clear")
 
-# ===================== BANNER =====================
 
 def banner():
     quotes = [
@@ -52,8 +48,7 @@ def banner():
     print(Fore.GREEN + random.choice(quotes))
     print(Fore.CYAN + "=" * 65)
 
-# ===================== HISTORY =====================
-
+]]
 def load_history():
     if os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, "r") as f:
