@@ -13,7 +13,6 @@ init(autoreset=True)
 history = []
 HISTORY_FILE = "history.json"
 
-# ===================== HELPERS =====================
 
 def get_number(prompt):
     while True:
